@@ -24,17 +24,23 @@ export function DownloadIcs({ blocks }: { blocks: Block[] }) {
     }
   }
 
+  if (blocks.length === 0) return null
+
   return (
-    <>
-      <button
-        type="button"
-        className="secondary"
-        onClick={handleClick}
-        disabled={busy || blocks.length === 0}
-      >
+    <div>
+      <button type="button" className="btn-toolbar" onClick={handleClick} disabled={busy}>
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
+          <path
+            d="M5.5 1v6.5M3 5l2.5 2.5L8 5M1 9.5h9"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         {busy ? 'Preparing…' : 'Download .ics'}
       </button>
       {error && <p className="field-error">{error}</p>}
-    </>
+    </div>
   )
 }

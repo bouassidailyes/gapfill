@@ -25,7 +25,7 @@ uvicorn app.main:app --reload --port 8000
 
 `GET http://localhost:8000/api/health` → `{"ok":true}`
 
-Set `ANTHROPIC_API_KEY` in `.env`. `DEMO_MODE=1` skips the LLM and returns `fixtures/schedule.mock.json`.
+Set `GEMINI_API_KEY` or `ANTHROPIC_API_KEY` in `.env`. `DEMO_MODE=1` skips the LLM and uses the deterministic backup placer (classes, meals and commitments stay fixed).
 
 ### Frontend
 

@@ -42,6 +42,8 @@ export type Action =
   | { type: 'patch-settings'; patch: Partial<Settings> }
   | { type: 'set-status'; status: Status; error?: string | null }
   | { type: 'set-plan'; blocks: Block[]; warnings: string[] }
+  | { type: 'remove-block'; id: string }
+  | { type: 'toggle-lock'; id: string }
 
 export function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -76,6 +78,15 @@ export function reducer(state: AppState, action: Action): AppState {
         warnings: action.warnings,
         status: 'ready',
         error: null,
+      }
+    case 'remove-block':
+      return { ...state, blocks: state.blocks.filter((b) => b.id !== action.id) }
+    case 'toggle-lock':
+      return {
+        ...state,
+        blocks: state.blocks.map((b) =>
+          b.id === action.id ? { ...b, locked: !b.locked } : b,
+        ),
       }
     default:
       return state

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,6 +20,7 @@ from app.models import (
 from app.planner import build_plan
 
 load_dotenv()
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 app = FastAPI(title="AI Student Scheduler")
 app.add_middleware(

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { RecurringRule } from '../recurring'
-import { WEEKDAYS, describeRule } from '../recurring'
+import { WEEKDAYS } from '../recurring'
+import { Panel } from './Panel'
 
 type Props = {
   rules: RecurringRule[]
@@ -29,21 +30,51 @@ export function RecurringForm({ rules, onAdd, onRemove }: Props) {
   }
 
   return (
-    <section className="panel">
-      <h2>Weekly commitments</h2>
+    <Panel label="Weekly Commitments" count={rules.length}>
+      {rules.length > 0 && (
+        <ul className="task-list" style={{ marginBottom: 10 }}>
+          {rules.map((rule) => (
+            <li key={rule.id} className="list-card">
+              <div className="list-card-top">
+                <strong>{rule.title}</strong>
+                <button
+                  type="button"
+                  className="icon"
+                  aria-label={`Remove ${rule.title}`}
+                  onClick={() => onRemove(rule.id)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="chip-row">
+                {WEEKDAYS.filter((day) => rule.weekdays.includes(day.value)).map((day) => (
+                  <span key={day.value} className="chip-tag">
+                    {day.label}
+                  </span>
+                ))}
+                <span className="chip-meta">
+                  {rule.start} · {rule.minutes} min
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={title}
-          placeholder="Gym"
+          placeholder="Activity name (e.g. Gym)"
           onChange={(e) => setTitle(e.target.value)}
+          style={{ marginBottom: 7 }}
         />
         <div className="weekday-row">
           {WEEKDAYS.map((day) => (
             <button
               key={day.value}
               type="button"
-              className={weekdays.includes(day.value) ? 'day on' : 'day'}
+              className={weekdays.includes(day.value) ? 'chip on' : 'chip'}
               aria-pressed={weekdays.includes(day.value)}
               onClick={() => toggleDay(day.value)}
             >
@@ -53,11 +84,11 @@ export function RecurringForm({ rules, onAdd, onRemove }: Props) {
         </div>
         <div className="field-row">
           <label>
-            Time
+            <div className="field-label">Time</div>
             <input type="time" value={start} onChange={(e) => setStart(e.target.value)} />
           </label>
           <label>
-            Minutes
+            <div className="field-label">Minutes</div>
             <input
               type="number"
               min={15}
@@ -68,33 +99,16 @@ export function RecurringForm({ rules, onAdd, onRemove }: Props) {
             />
           </label>
         </div>
-        <button type="submit" className="ghost" disabled={!title.trim() || weekdays.length === 0}>
+        <button type="submit" className="btn-ghost" disabled={!title.trim() || weekdays.length === 0}>
           Add commitment
         </button>
       </form>
-      {rules.length === 0 ? (
-        <p className="hint">Nothing weekly yet. Sport, work shifts, a standing meeting.</p>
-      ) : (
-        <ul className="task-list">
-          {rules.map((rule) => (
-            <li key={rule.id}>
-              <span>
-                <strong>{rule.title}</strong>
-                <br />
-                <small>{describeRule(rule)}</small>
-              </span>
-              <button
-                type="button"
-                className="icon"
-                aria-label={`Remove ${rule.title}`}
-                onClick={() => onRemove(rule.id)}
-              >
-                ×
-              </button>
-            </li>
-          ))}
-        </ul>
+      {rules.length === 0 && (
+        <p className="hint">
+          Nothing weekly yet.{' '}
+          <span style={{ color: 'var(--fg2)' }}>Sport, work shifts, a standing meeting.</span>
+        </p>
       )}
-    </section>
+    </Panel>
   )
 }

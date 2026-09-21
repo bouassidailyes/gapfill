@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { TaskInput } from '../types'
+import { Panel } from './Panel'
 
 type Props = {
   tasks: TaskInput[]
@@ -22,13 +23,13 @@ export function TaskList({ tasks, onAdd, onRemove }: Props) {
   }
 
   return (
-    <section className="panel">
-      <h2>Tasks</h2>
+    <Panel label="Tasks" count={tasks.length}>
       <form className="task-form" onSubmit={handleSubmit}>
         <input
+          className="grow"
           type="text"
           value={text}
-          placeholder="Finish DB assignment, due Fri"
+          placeholder="e.g. Finish DB assignment, due Fri"
           onChange={(e) => setText(e.target.value)}
         />
         <label className="minutes">
@@ -42,22 +43,26 @@ export function TaskList({ tasks, onAdd, onRemove }: Props) {
             onChange={(e) => setMinutes(Number(e.target.value) || 60)}
           />
         </label>
-        <button type="submit" className="ghost">
+        <button type="submit" className="btn-add">
           Add
         </button>
       </form>
       {tasks.length === 0 ? (
-        <p className="hint">Homework and other work that can move around classes.</p>
+        <p className="hint">
+          No tasks yet. Add one <span style={{ color: 'var(--accent2)' }}>per line</span> of your
+          to-do list.
+        </p>
       ) : (
         <ul className="task-list">
           {tasks.map((task) => (
             <li key={task.id}>
+              <span className="task-dot" />
               <span>
                 {task.text}
                 {task.estimated_minutes ? (
                   <>
                     <br />
-                    <small>~{task.estimated_minutes} min</small>
+                    <small className="chip-meta">~{task.estimated_minutes} min</small>
                   </>
                 ) : null}
               </span>
@@ -73,6 +78,6 @@ export function TaskList({ tasks, onAdd, onRemove }: Props) {
           ))}
         </ul>
       )}
-    </section>
+    </Panel>
   )
 }

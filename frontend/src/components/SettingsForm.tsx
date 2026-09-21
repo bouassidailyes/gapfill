@@ -1,4 +1,5 @@
 import type { Settings } from '../types'
+import { Panel } from './Panel'
 
 type Props = {
   settings: Settings
@@ -9,14 +10,10 @@ export function SettingsForm({ settings, onPatch }: Props) {
   const { meals, cooking } = settings
 
   return (
-    <details className="panel" open>
-      <summary>
-        <h2>Settings</h2>
-      </summary>
-
+    <Panel label="Settings">
       <div className="field-row">
         <label>
-          Day starts
+          <div className="field-label">Day starts</div>
           <input
             type="time"
             value={settings.day_start}
@@ -24,7 +21,7 @@ export function SettingsForm({ settings, onPatch }: Props) {
           />
         </label>
         <label>
-          Day ends
+          <div className="field-label">Day ends</div>
           <input
             type="time"
             value={settings.day_end}
@@ -35,7 +32,7 @@ export function SettingsForm({ settings, onPatch }: Props) {
 
       <div className="field-row">
         <label>
-          Lunch (min)
+          <div className="field-label">Lunch (min)</div>
           <input
             type="number"
             min={0}
@@ -49,7 +46,7 @@ export function SettingsForm({ settings, onPatch }: Props) {
           />
         </label>
         <label>
-          Dinner (min)
+          <div className="field-label">Dinner (min)</div>
           <input
             type="number"
             min={0}
@@ -66,7 +63,7 @@ export function SettingsForm({ settings, onPatch }: Props) {
 
       <div className="field-row">
         <label>
-          Cooking
+          <div className="field-label">Cooking</div>
           <select
             value={cooking.mode}
             onChange={(e) =>
@@ -78,25 +75,24 @@ export function SettingsForm({ settings, onPatch }: Props) {
             <option value="none">None</option>
           </select>
         </label>
-        {cooking.mode === 'batch' && (
-          <label>
-            Batches / week
-            <input
-              type="number"
-              min={1}
-              max={7}
-              value={cooking.batch_per_week}
-              onChange={(e) =>
-                onPatch({ cooking: { ...cooking, batch_per_week: Number(e.target.value) } })
-              }
-            />
-          </label>
-        )}
+        <label>
+          <div className="field-label">Batches / week</div>
+          <input
+            type="number"
+            min={1}
+            max={7}
+            value={cooking.batch_per_week}
+            disabled={cooking.mode !== 'batch'}
+            onChange={(e) =>
+              onPatch({ cooking: { ...cooking, batch_per_week: Number(e.target.value) } })
+            }
+          />
+        </label>
       </div>
 
-      <div className="field-row">
+      <div className="field-stack">
         <label>
-          Travel between locations (min)
+          <div className="field-label">Travel between locations (min)</div>
           <input
             type="number"
             min={0}
@@ -107,9 +103,9 @@ export function SettingsForm({ settings, onPatch }: Props) {
         </label>
       </div>
 
-      <div className="field-row">
+      <div className="field-row" style={{ marginBottom: 0 }}>
         <label>
-          Lost time (%)
+          <div className="field-label">Lost time (%)</div>
           <input
             type="number"
             min={0}
@@ -119,7 +115,7 @@ export function SettingsForm({ settings, onPatch }: Props) {
           />
         </label>
         <label>
-          Free time / day (min)
+          <div className="field-label">Free time / day (min)</div>
           <input
             type="number"
             min={0}
@@ -130,6 +126,6 @@ export function SettingsForm({ settings, onPatch }: Props) {
           />
         </label>
       </div>
-    </details>
+    </Panel>
   )
 }
