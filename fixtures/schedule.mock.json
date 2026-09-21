@@ -1,0 +1,263 @@
+{
+  "blocks": [
+    {
+      "id": "evt-lecture-mon",
+      "type": "event",
+      "title": "Databases lecture",
+      "start": "2026-09-21T09:00:00+02:00",
+      "end": "2026-09-21T11:00:00+02:00",
+      "location": "UM Campus"
+    },
+    {
+      "id": "task-t6-s1",
+      "type": "task",
+      "title": "Reply to internship email",
+      "start": "2026-09-21T11:15:00+02:00",
+      "end": "2026-09-21T11:40:00+02:00",
+      "task_id": "t6"
+    },
+    {
+      "id": "meal-lunch-mon",
+      "type": "meal",
+      "title": "Lunch",
+      "start": "2026-09-21T12:00:00+02:00",
+      "end": "2026-09-21T12:30:00+02:00"
+    },
+    {
+      "id": "task-t1-s1",
+      "type": "task",
+      "title": "Finish DB assignment",
+      "start": "2026-09-21T13:00:00+02:00",
+      "end": "2026-09-21T14:30:00+02:00",
+      "task_id": "t1"
+    },
+    {
+      "id": "cook-mon",
+      "type": "cook",
+      "title": "Batch cook",
+      "start": "2026-09-21T17:45:00+02:00",
+      "end": "2026-09-21T18:30:00+02:00"
+    },
+    {
+      "id": "meal-dinner-mon",
+      "type": "meal",
+      "title": "Dinner",
+      "start": "2026-09-21T18:30:00+02:00",
+      "end": "2026-09-21T19:00:00+02:00"
+    },
+    {
+      "id": "free-mon",
+      "type": "free",
+      "title": "Free time",
+      "start": "2026-09-21T21:00:00+02:00",
+      "end": "2026-09-21T22:00:00+02:00"
+    },
+    {
+      "id": "task-t2-s1",
+      "type": "task",
+      "title": "Prep group presentation slides",
+      "start": "2026-09-22T10:00:00+02:00",
+      "end": "2026-09-22T11:00:00+02:00",
+      "task_id": "t2"
+    },
+    {
+      "id": "meal-lunch-tue",
+      "type": "meal",
+      "title": "Lunch",
+      "start": "2026-09-22T12:00:00+02:00",
+      "end": "2026-09-22T12:30:00+02:00"
+    },
+    {
+      "id": "travel-tue",
+      "type": "travel",
+      "title": "Travel UM Campus → University Library",
+      "start": "2026-09-22T13:40:00+02:00",
+      "end": "2026-09-22T14:00:00+02:00"
+    },
+    {
+      "id": "evt-tutorial-tue",
+      "type": "event",
+      "title": "Statistics tutorial",
+      "start": "2026-09-22T14:00:00+02:00",
+      "end": "2026-09-22T16:00:00+02:00",
+      "location": "University Library"
+    },
+    {
+      "id": "task-t4-s1",
+      "type": "task",
+      "title": "Gym",
+      "start": "2026-09-22T16:30:00+02:00",
+      "end": "2026-09-22T17:15:00+02:00",
+      "task_id": "t4"
+    },
+    {
+      "id": "evt-lecture-wed",
+      "type": "event",
+      "title": "Databases lecture",
+      "start": "2026-09-23T09:00:00+02:00",
+      "end": "2026-09-23T11:00:00+02:00",
+      "location": "UM Campus"
+    },
+    {
+      "id": "meal-lunch-wed",
+      "type": "meal",
+      "title": "Lunch",
+      "start": "2026-09-23T12:00:00+02:00",
+      "end": "2026-09-23T12:30:00+02:00"
+    },
+    {
+      "id": "task-t1-s2",
+      "type": "task",
+      "title": "Finish DB assignment",
+      "start": "2026-09-23T13:00:00+02:00",
+      "end": "2026-09-23T14:30:00+02:00",
+      "task_id": "t1"
+    },
+    {
+      "id": "cook-wed",
+      "type": "cook",
+      "title": "Batch cook",
+      "start": "2026-09-23T17:45:00+02:00",
+      "end": "2026-09-23T18:30:00+02:00"
+    },
+    {
+      "id": "meal-dinner-wed",
+      "type": "meal",
+      "title": "Dinner",
+      "start": "2026-09-23T18:30:00+02:00",
+      "end": "2026-09-23T19:00:00+02:00"
+    },
+    {
+      "id": "free-wed",
+      "type": "free",
+      "title": "Free time",
+      "start": "2026-09-23T21:00:00+02:00",
+      "end": "2026-09-23T22:00:00+02:00"
+    },
+    {
+      "id": "task-t2-s2",
+      "type": "task",
+      "title": "Prep group presentation slides",
+      "start": "2026-09-24T10:00:00+02:00",
+      "end": "2026-09-24T11:00:00+02:00",
+      "task_id": "t2"
+    },
+    {
+      "id": "meal-lunch-thu",
+      "type": "meal",
+      "title": "Lunch",
+      "start": "2026-09-24T12:00:00+02:00",
+      "end": "2026-09-24T12:30:00+02:00"
+    },
+    {
+      "id": "evt-lab-thu",
+      "type": "event",
+      "title": "HCI lab",
+      "start": "2026-09-24T13:00:00+02:00",
+      "end": "2026-09-24T15:00:00+02:00",
+      "location": "UM Campus"
+    },
+    {
+      "id": "evt-lecture-fri",
+      "type": "event",
+      "title": "Databases lecture",
+      "start": "2026-09-25T09:00:00+02:00",
+      "end": "2026-09-25T11:00:00+02:00",
+      "location": "UM Campus"
+    },
+    {
+      "id": "meal-lunch-fri",
+      "type": "meal",
+      "title": "Lunch",
+      "start": "2026-09-25T12:00:00+02:00",
+      "end": "2026-09-25T12:30:00+02:00"
+    },
+    {
+      "id": "meal-dinner-fri",
+      "type": "meal",
+      "title": "Dinner",
+      "start": "2026-09-25T18:30:00+02:00",
+      "end": "2026-09-25T19:00:00+02:00"
+    },
+    {
+      "id": "free-fri",
+      "type": "free",
+      "title": "Free time",
+      "start": "2026-09-25T21:00:00+02:00",
+      "end": "2026-09-25T22:00:00+02:00"
+    },
+    {
+      "id": "evt-assoc-sat",
+      "type": "event",
+      "title": "Study association day",
+      "start": "2026-09-26T00:00:00+02:00",
+      "end": "2026-09-27T00:00:00+02:00",
+      "location": "UM Campus"
+    }
+  ],
+  "task_plans": [
+    {
+      "task_id": "t1",
+      "title": "Finish DB assignment",
+      "deadline": "2026-09-25T23:59:00+02:00",
+      "priority": 1,
+      "estimated_minutes": 180,
+      "sessions": [
+        { "id": "t1-s1", "minutes": 90, "kind": "deep" },
+        { "id": "t1-s2", "minutes": 90, "kind": "deep" }
+      ],
+      "preferred_time": "afternoon"
+    },
+    {
+      "task_id": "t2",
+      "title": "Prep group presentation slides",
+      "deadline": "2026-09-24T23:59:00+02:00",
+      "priority": 1,
+      "estimated_minutes": 120,
+      "sessions": [
+        { "id": "t2-s1", "minutes": 60, "kind": "deep" },
+        { "id": "t2-s2", "minutes": 60, "kind": "deep" }
+      ],
+      "preferred_time": "morning"
+    },
+    {
+      "task_id": "t4",
+      "title": "Gym twice this week",
+      "deadline": null,
+      "priority": 2,
+      "estimated_minutes": 90,
+      "sessions": [
+        { "id": "t4-s1", "minutes": 45, "kind": "light" },
+        { "id": "t4-s2", "minutes": 45, "kind": "light" }
+      ],
+      "preferred_time": "evening"
+    },
+    {
+      "task_id": "t6",
+      "title": "Reply to internship email",
+      "deadline": "2026-09-22T23:59:00+02:00",
+      "priority": 1,
+      "estimated_minutes": 25,
+      "sessions": [
+        { "id": "t6-s1", "minutes": 25, "kind": "light" }
+      ],
+      "preferred_time": "morning"
+    },
+    {
+      "task_id": "t8",
+      "title": "Clean room / laundry",
+      "deadline": null,
+      "priority": 3,
+      "estimated_minutes": 40,
+      "sessions": [
+        { "id": "t8-s1", "minutes": 40, "kind": "light" }
+      ],
+      "preferred_time": "any",
+      "notes": "Dropped: not enough free time after higher-priority work."
+    }
+  ],
+  "warnings": [
+    "Saturday meal windows are fully busy (all-day event).",
+    "Dropped session t8-s1 (Clean room / laundry): not enough free time."
+  ]
+}

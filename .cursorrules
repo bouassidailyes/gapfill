@@ -1,0 +1,55 @@
+# AI Student Scheduler — Cursor rules
+
+## Project
+Hackathon project (5 hours, 3 people). Input: a student's .ics calendar + a free-text to-do list + settings. Output: a planned week in a calendar UI and a downloadable .ics.
+Read architecture.md before coding. It is the source of truth for the design, the pipeline and the API contract (section 6).
+
+## Stack
+- Backend: Python 3.11, FastAPI, pydantic v2, icalendar, recurring-ical-events, anthropic SDK (wrapped in llm.py).
+- Frontend: Vite + React + TypeScript, FullCalendar.
+- No database, no auth, no deployment. Backend is stateless; the frontend holds the state.
+
+## Ownership (two people code with Cursor at the same time)
+- Person A owns backend/. Person B owns frontend/. Person C owns backend/app/prompts/, fixtures/ and docs/.
+- Only edit files in your own directory. If you need a change somewhere else, stop and tell the user so they can tell the team.
+- models.py (backend) and types.ts (frontend) must always match architecture.md section 6.
+
+## The API contract is frozen
+- Never rename fields, change types or add required fields silently.
+- If the contract has to change: stop, explain the change to the user, and wait. The user will announce it to the team, then update models.py and types.ts together.
+- All datetimes are ISO 8601 with offset, timezone Europe/Amsterdam by default.
+
+## Core design rule
+The LLM proposes, code guarantees.
+- Meals, cooking, travel, sleep, free time and lost time are computed in constraints.py. Never delegate them to a prompt.
+- The two LLM calls are allocate.py (call 1: time per task) and place.py (call 2: time slots). Nothing else calls the LLM.
+- Every LLM output is untrusted: parse it, validate it with pydantic, never index into it blindly.
+- Every plan goes through validate.py: window check, overlap check, deadline check, one retry, then the greedy fallback. A response with an invalid calendar must be impossible.
+- Prompts live in backend/app/prompts/*.md. Do not inline prompts in Python.
+
+## Backend conventions
+- Keep functions small and pure. Logic goes in constraints.py, validate.py, ics_parse.py and ics_export.py, not in route handlers.
+- Type hints everywhere. Return pydantic models, not loose dicts.
+- Errors: raise HTTPException with a readable message (e.g. 422 for a bad .ics).
+- Write pytest tests for the pure modules (ics_parse, constraints, validate, ics_export), not for routes.
+- Config comes from env vars: ANTHROPIC_API_KEY, LLM_MODEL, DEMO_MODE. Never hardcode a key.
+
+## Frontend conventions
+- Functional components, hooks, TypeScript strict. No `any` for API data: use the types in types.ts.
+- One state container (useReducer): events, tasks, settings, blocks, warnings, status.
+- All network calls go through src/api.ts. VITE_USE_MOCK=1 makes it return fixtures/schedule.mock.json.
+- Always render loading, error and empty states. A plan takes 10-25 seconds: show a two-step progress ("Estimating time...", "Placing tasks...").
+
+## Speed over polish
+- Choose the simplest thing that works. No over-engineering, no premature abstractions.
+- No new dependencies without asking the user first.
+- Do not refactor code you were not asked to touch.
+- After the feature freeze (announced by the user), only fix bugs. No new features.
+
+## Git
+- Never commit to main directly. Work on your branch (be / fe / content).
+- Small commits, message format `type(scope): message`, e.g. `feat(be): meal blocks`, `fix(fe): task delete`.
+- Before proposing a merge, the smoke test must pass: pytest -q, GET /api/health, npm run build.
+
+## When unsure
+Ask the user instead of guessing, especially about the contract, another person's directory, or scope.

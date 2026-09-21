@@ -1,6 +1,5 @@
 # AI Student Scheduler — Architecture
 
-> Feed this file to Cursor (`@architecture.md`) at the start of every chat. Sections 5 and 6 are the contract: do not change them without telling the team.
 
 ## 1. What we're building
 

@@ -1,0 +1,120 @@
+:root {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100%;
+}
+
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 1.25rem;
+  overflow: auto;
+}
+
+.sidebar h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+}
+
+.lede {
+  margin: 0 0 1rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.sidebar button {
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+  padding: 0.6rem;
+  border: 0;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar button:disabled {
+  background: #94a3b8;
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0.75rem;
+}
+
+.calendar-wrap {
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.banner {
+  background: #e0f2fe;
+  border: 1px solid #7dd3fc;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.banner.warn {
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+
+.banner.error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.banner p {
+  margin: 0.15rem 0;
+}

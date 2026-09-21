@@ -1,0 +1,19 @@
+{
+  "timezone": "Europe/Amsterdam",
+  "horizon_start": "2026-09-21",
+  "horizon_days": 7,
+  "day_start": "08:00",
+  "day_end": "22:30",
+  "meals": {
+    "breakfast": { "window": ["08:00", "09:00"], "minutes": 20 },
+    "lunch": { "window": ["12:00", "13:30"], "minutes": 30 },
+    "dinner": { "window": ["18:30", "20:00"], "minutes": 30 }
+  },
+  "cooking": { "mode": "batch", "batch_per_week": 3, "cook_minutes": 45 },
+  "transition_minutes": 15,
+  "travel_overrides": [
+    { "from": "UM Campus", "to": "University Library", "minutes": 20 }
+  ],
+  "lost_time_pct": 15,
+  "free_time_min_per_day": 60
+}

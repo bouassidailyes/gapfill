@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+icalendar
+recurring-ical-events
+python-dateutil
+anthropic
+pytest
+python-multipart
+python-dotenv
