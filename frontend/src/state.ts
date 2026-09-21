@@ -1,3 +1,4 @@
+import type { RecurringRule } from './recurring'
 import type { Block, Event, Settings, TaskInput } from './types'
 import { DEFAULT_SETTINGS } from './types'
 
@@ -6,6 +7,7 @@ export type Status = 'idle' | 'loading-allocate' | 'loading-place' | 'error' | '
 export type AppState = {
   events: Event[]
   tasks: TaskInput[]
+  recurring: RecurringRule[]
   settings: Settings
   blocks: Block[]
   warnings: string[]
@@ -16,6 +18,7 @@ export type AppState = {
 export const initialState: AppState = {
   events: [],
   tasks: [],
+  recurring: [],
   settings: DEFAULT_SETTINGS,
   blocks: [],
   warnings: [],
@@ -28,6 +31,8 @@ export type Action =
   | { type: 'set-tasks'; tasks: TaskInput[] }
   | { type: 'add-task'; task: TaskInput }
   | { type: 'remove-task'; id: string }
+  | { type: 'add-recurring'; rule: RecurringRule }
+  | { type: 'remove-recurring'; id: string }
   | { type: 'set-settings'; settings: Settings }
   | { type: 'patch-settings'; patch: Partial<Settings> }
   | { type: 'set-status'; status: Status; error?: string | null }
@@ -47,6 +52,10 @@ export function reducer(state: AppState, action: Action): AppState {
         tasks: state.tasks.filter((t) => t.id !== action.id),
         blocks: state.blocks.filter((b) => b.task_id !== action.id),
       }
+    case 'add-recurring':
+      return { ...state, recurring: [...state.recurring, action.rule] }
+    case 'remove-recurring':
+      return { ...state, recurring: state.recurring.filter((r) => r.id !== action.id) }
     case 'set-settings':
       return { ...state, settings: action.settings }
     case 'patch-settings':

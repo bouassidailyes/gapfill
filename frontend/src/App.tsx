@@ -1,14 +1,28 @@
-import { useReducer } from 'react'
+import { useMemo, useReducer } from 'react'
 import { schedule } from './api'
 import { CalendarView } from './components/CalendarView'
 import { IcsUpload } from './components/IcsUpload'
 import { Legend } from './components/Legend'
+import { RecurringForm } from './components/RecurringForm'
 import { SettingsForm } from './components/SettingsForm'
 import { TaskList } from './components/TaskList'
+import { expandRecurring } from './recurring'
 import { initialState, reducer } from './state'
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  const allEvents = useMemo(
+    () => [
+      ...state.events,
+      ...expandRecurring(
+        state.recurring,
+        state.settings.horizon_start,
+        state.settings.horizon_days,
+      ),
+    ],
+    [state.events, state.recurring, state.settings.horizon_start, state.settings.horizon_days],
+  )
 
   const progress =
     state.status === 'loading-allocate'
@@ -25,7 +39,7 @@ export default function App() {
     )
     try {
       const res = await schedule({
-        events: state.events,
+        events: allEvents,
         tasks: state.tasks,
         settings: state.settings,
       })
@@ -57,6 +71,12 @@ export default function App() {
           onRemove={(id) => dispatch({ type: 'remove-task', id })}
         />
 
+        <RecurringForm
+          rules={state.recurring}
+          onAdd={(rule) => dispatch({ type: 'add-recurring', rule: { ...rule, id: crypto.randomUUID() } })}
+          onRemove={(id) => dispatch({ type: 'remove-recurring', id })}
+        />
+
         <SettingsForm
           settings={state.settings}
           onPatch={(patch) => dispatch({ type: 'patch-settings', patch })}
@@ -86,11 +106,17 @@ export default function App() {
         {progress && <div className="banner">{progress}</div>}
         {state.blocks.length === 0 && !progress && !state.error && (
           <div className="banner">
-            No plan yet. Add your tasks, check the settings, then hit “Plan my week”.
+            {allEvents.length > 0
+              ? 'Showing your fixed commitments. Add tasks, then hit “Plan my week”.'
+              : 'No plan yet. Add your tasks, check the settings, then hit “Plan my week”.'}
           </div>
         )}
         <div className="calendar-wrap">
-          <CalendarView blocks={state.blocks} />
+          <CalendarView
+            blocks={state.blocks}
+            previewEvents={allEvents}
+            settings={state.settings}
+          />
         </div>
       </main>
     </div>
