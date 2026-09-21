@@ -84,7 +84,7 @@ export default function App() {
             </div>
             <div>
               <div className="brand-name">Gapfill</div>
-              <div className="brand-tag">AI · WEEK PLANNER</div>
+              <div className="brand-tag">WEEK PLANNER</div>
             </div>
           </div>
         </div>

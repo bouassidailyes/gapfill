@@ -20,15 +20,17 @@ def allocate(
     today: str,
     horizon_days: int,
     free_minutes_per_day: dict[str, int],
-) -> list[TaskPlan]:
+) -> tuple[list[TaskPlan], list[str]]:
     if not tasks:
-        return []
+        return [], []
     if llm_enabled():
         try:
-            return _allocate_llm(tasks, today, horizon_days, free_minutes_per_day)
-        except LlmError:
-            pass
-    return allocate_fallback(tasks)
+            return _allocate_llm(tasks, today, horizon_days, free_minutes_per_day), []
+        except LlmError as exc:
+            return allocate_fallback(tasks), [
+                f"The model failed to estimate times ({exc}); used backup estimates."
+            ]
+    return allocate_fallback(tasks), []
 
 
 def allocate_fallback(tasks: list[TaskInput]) -> list[TaskPlan]:

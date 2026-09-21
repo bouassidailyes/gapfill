@@ -25,12 +25,13 @@ def build_plan(req: ScheduleRequest) -> ScheduleResponse:
         )
         free_per_day[day] = free_per_day.get(day, 0) + minutes
 
-    task_plans = allocate(
+    task_plans, alloc_warnings = allocate(
         req.tasks,
         req.settings.horizon_start,
         req.settings.horizon_days,
         free_per_day,
     )
+    warnings.extend(alloc_warnings)
 
     task_blocks, place_warnings = _place_tasks(windows, task_plans)
     warnings.extend(place_warnings)
@@ -51,6 +52,6 @@ def _place_tasks(windows, task_plans):
         if violations:
             placements = place(windows, task_plans, violations)
         return validate_and_repair(placements, windows, task_plans)
-    except LlmError:
+    except LlmError as exc:
         blocks, warnings = greedy_place(windows, task_plans)
-        return blocks, ["The model failed; used the backup placer."] + warnings
+        return blocks, [f"The model failed to place tasks ({exc}); used the backup placer."] + warnings

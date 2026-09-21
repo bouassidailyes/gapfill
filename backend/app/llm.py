@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -21,9 +23,11 @@ ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / "cache" / "llm"
 TIMEOUT = 60.0
 TEMPERATURE = 0.2
+DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
+log = logging.getLogger(__name__)
 
-load_dotenv()
-load_dotenv(ROOT / ".env")
+# override=True so DEMO_MODE=0 in .env wins over a leftover DEMO_MODE=1 in the shell.
+load_dotenv(ROOT / ".env", override=True)
 
 
 class LlmError(RuntimeError):
@@ -79,8 +83,8 @@ def _complete(system: str, user: str) -> str:
 
 
 def _gemini(system: str, user: str, api_key: str) -> str:
-    model = os.getenv("LLM_MODEL") or "gemini-2.5-flash"
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    model = os.getenv("LLM_MODEL") or DEFAULT_GEMINI_MODEL
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     payload = {
         "systemInstruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": user}]}],
@@ -89,18 +93,45 @@ def _gemini(system: str, user: str, api_key: str) -> str:
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "x-goog-api-key": api_key},
         method="POST",
     )
+    body: dict[str, object] | None = None
+    for attempt in range(2):
+        try:
+            with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+                body = json.loads(response.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as exc:
+            message = _gemini_http_error(exc, api_key)
+            if exc.code == 503 and attempt == 0:
+                log.warning("%s; retrying once", message)
+                time.sleep(1.5)
+                continue
+            raise LlmError(message) from exc
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            raise LlmError(f"Gemini request failed: {_redact(exc, api_key)}") from exc
+    if body is None:
+        raise LlmError("Gemini request failed after retry.")
     try:
-        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-            body = json.loads(response.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-        raise LlmError(f"Gemini request failed: {exc}") from exc
-    try:
-        return body["candidates"][0]["content"]["parts"][0]["text"]
+        return body["candidates"][0]["content"]["parts"][0]["text"]  # type: ignore[index]
     except (KeyError, IndexError, TypeError) as exc:
         raise LlmError("Gemini returned an empty reply.") from exc
+
+
+def _gemini_http_error(exc: urllib.error.HTTPError, api_key: str) -> str:
+    raw = _redact(exc.read().decode("utf-8", "replace"), api_key)
+    try:
+        payload = json.loads(raw)
+        detail = payload.get("error", {}).get("message") or raw
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        detail = raw
+    return f"Gemini HTTP {exc.code}: {str(detail).strip()[:240]}"
+
+
+def _redact(value: object, api_key: str) -> str:
+    text = str(value)
+    return text.replace(api_key, "***") if api_key else text
 
 
 def _anthropic(system: str, user: str, api_key: str) -> str:
