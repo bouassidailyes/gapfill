@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { parseIcs } from '../api'
+import { parseCalendar } from '../api'
 import type { Event } from '../types'
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   onEvents: (events: Event[]) => void
 }
 
-export function IcsUpload({ events, onEvents }: Props) {
+export function ScheduleUpload({ events, onEvents }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,9 +18,9 @@ export function IcsUpload({ events, onEvents }: Props) {
     setLoading(true)
     setError(null)
     try {
-      onEvents(await parseIcs(file))
+      onEvents(await parseCalendar(file))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not read this calendar.')
+      setError(err instanceof Error ? err.message : 'Could not read this schedule.')
       onEvents([])
     } finally {
       setLoading(false)
@@ -29,13 +29,20 @@ export function IcsUpload({ events, onEvents }: Props) {
 
   return (
     <section className="panel">
-      <h2>Calendar</h2>
-      <input type="file" accept=".ics,text/calendar" onChange={handleChange} disabled={loading} />
-      {loading && <p className="hint">Reading calendar…</p>}
+      <h2>Schedule</h2>
+      <input
+        type="file"
+        accept=".csv,.ics,text/csv,text/calendar"
+        onChange={handleChange}
+        disabled={loading}
+      />
+      {loading && <p className="hint">Reading schedule…</p>}
       {error && <p className="field-error">{error}</p>}
       {!loading && !error && (
         <p className="hint">
-          {events.length > 0 ? `${events.length} events loaded` : 'No calendar yet (optional).'}
+          {events.length > 0
+            ? `${events.length} events loaded`
+            : 'Upload your timetable export (.csv or .ics).'}
         </p>
       )}
     </section>

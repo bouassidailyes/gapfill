@@ -15,7 +15,7 @@ Assign names to slots at kickoff. Times are relative to the hackathon start (H0:
 | | Tasks | Done when |
 |---|---|---|
 | **All** (0:00–0:30) | Read `architecture.md`. Freeze §6 (contract). Create repo, branches `be`/`fe`/`content`, `.cursorrules` on both Cursor instances. Confirm submission deadline and track. | Everyone can run their part locally |
-| **A** | Repo skeleton, FastAPI `/api/health`, `models.py` from §6 (freeze by 0:30). Then `ics_parse.py`: recurring events, all-day, timezone → `Event[]`, `POST /api/parse-ics`. | Sample `.ics` returns correct events |
+| **A** | Repo skeleton, FastAPI `/api/health`, `models.py` from §6 (freeze by 0:30). Then `csv_parse.py` (UM timetable export → `Event[]`, `POST /api/parse-csv`) and `ics_parse.py` (recurring, all-day, timezone → `Event[]`, `POST /api/parse-ics`). | Sample `.csv` and `.ics` return correct events |
 | **B** | Vite + React + TS scaffold, `types.ts` mirroring §6, `api.ts` with `VITE_USE_MOCK`. FullCalendar `timeGridWeek` rendering `schedule.mock.json`, colour per block type. | Mock week renders in the browser |
 | **C** | `fixtures/sample_calendar.ics` (real anonymised week, recurring + all-day + two locations), `sample_tasks.txt` (8 tasks, mix of deadlines/no deadlines/vague), `settings.json`. **By 0:45:** hand-write `schedule.mock.json` and `allocation.mock.json` valid against the schema (realistic: ~25 blocks over 7 days). Draft `allocate.md` v0. | Mocks pushed at 0:45: B is unblocked |
 
@@ -24,10 +24,10 @@ Assign names to slots at kickoff. Times are relative to the hackathon start (H0:
 | | Tasks | Done when |
 |---|---|---|
 | **A** | `constraints.py`: sleep/waking hours, meals, cooking (daily/batch), travel blocks, free-time block, slack → `FixedBlock[]` + `FreeWindow[]`. `pytest` on the sample calendar. Script that dumps `free_windows.json` for C by 1:30. | Free windows on the sample week look sane by eye |
-| **B** | Sidebar: `.ics` upload (calls `/api/parse-ics`), settings form (locations/transition, meals, cooking frequency, lost time %, free time), task list with add/remove, **Plan my week** button, loading + error states. | Whole input side works against mock |
+| **B** | Sidebar: timetable upload (`.csv` → `/api/parse-csv`, `.ics` → `/api/parse-ics`), settings form (locations/transition, meals, cooking frequency, lost time %, free time), task list with add/remove, **Plan my week** button, loading + error states. | Whole input side works against mock |
 | **C** | Prompts v1: finish `allocate.md`, write `place.md`. Test both by hand on the fixtures (use `free_windows.json` from A once it lands). Log failures in `docs/bugs.md`. Write `README.md` (how to run) and `fixtures/schedule.request.json` (events + tasks + settings, for curl smoke tests). Start the QA checklist in `plan.md` (Phase 5 QA checklist). | Both prompts return valid JSON on the normal scenario |
 
-**Checkpoint 1 (H2:00):** `/api/parse-ics` and `constraints.py` work on the sample calendar.
+**Checkpoint 1 (H2:00):** `/api/parse-csv`, `/api/parse-ics` and `constraints.py` work on the sample timetable.
 
 ## Hour 3 — H2:00 to H3:00 · Integration and reliability
 

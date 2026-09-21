@@ -3,7 +3,7 @@
 From the first scaffold commit to the last commit: **6 phases**, each ending on a **gate** (exit criteria), a **merge to `main`** and a **git tag**. Design lives in `architecture.md`; who does what by the hour lives in `tasks.md`.
 
 **MVP = done when all five hold:**
-1. Upload a real `.ics` and paste 6–8 tasks in plain language.
+1. Upload a real timetable (`.csv` from UM, or `.ics`) and paste 6–8 tasks in plain language.
 2. **Plan my week** → week calendar with tasks, meals, cooking, travel and free time; no overlaps, deadlines respected.
 3. Add a task → it fills existing gaps without moving anything. Remove a task → it disappears.
 4. **Download .ics** → imports cleanly into Google/Apple Calendar.
@@ -53,7 +53,7 @@ Assumes submission at H5:00. Confirm the real deadline at kickoff and shift Phas
 5. **Frontend scaffold (B):** `npm create vite@latest frontend -- --template react-ts`, add FullCalendar packages, Vite proxy `/api` → `:8000`, `api.ts` with `VITE_USE_MOCK`, week view rendering `schedule.mock.json` with a colour per block type.
 6. **Fixtures (C):** `sample_calendar.ics` (anonymised real week: recurring event, all-day event, two locations), `sample_tasks.txt` (8 tasks: deadlines, vague, none), `settings.json`. **By 0:45:** hand-written `schedule.mock.json` and `allocation.mock.json` (~25 blocks over 7 days).
 7. **Contract check (A, 0:45):** validate the mocks against pydantic: `python -c "from app.models import ScheduleResponse; ScheduleResponse.model_validate_json(open('../fixtures/schedule.mock.json').read())"`. Fix whichever side is wrong.
-8. **ICS parse (A, last 15 min):** `ics_parse.py` + `POST /api/parse-ics` on the sample file.
+8. **Timetable parse (A, last 15 min):** `csv_parse.py` + `POST /api/parse-csv` (primary: the UM export) and `ics_parse.py` + `POST /api/parse-ics`, both on the sample files.
 
 **Gate**
 - [ ] `curl localhost:8000/api/health` returns `{"ok": true}`
@@ -80,7 +80,7 @@ Assumes submission at H5:00. Confirm the real deadline at kickoff and shift Phas
 
 **Gate (Checkpoint 1, H2:00)**
 - [ ] `pytest -q` green on the sample calendar
-- [ ] `/api/parse-ics` returns correct events, including the recurring and all-day ones
+- [ ] `/api/parse-csv` and `/api/parse-ics` return correct events, including the all-day and recurring ones
 - [ ] Free windows look right by eye: none overlaps an event, none shorter than 25 min, meals present, one free-time block per day
 - [ ] Sidebar uploads a file and renders the events; settings and tasks are captured in state
 - [ ] Both prompts return valid JSON on the normal scenario
@@ -156,6 +156,7 @@ Assumes submission at H5:00. Confirm the real deadline at kickoff and shift Phas
 6. **Slides + first dry run (C):** 3–5 slides (problem, solution, "LLM proposes, code guarantees", demo, next steps); one timed run-through.
 
 **QA checklist**
+- [ ] Upload sample `.csv`: events correct (times, all-day row, locations)
 - [ ] Upload sample `.ics`: events correct (recurring, all-day, two locations)
 - [ ] Plan with 8 tasks: no overlaps, everything inside waking hours
 - [ ] Every task with a deadline is placed before it
@@ -166,7 +167,7 @@ Assumes submission at H5:00. Confirm the real deadline at kickoff and shift Phas
 - [ ] Add a task: placed in existing gaps, nothing else moves
 - [ ] Remove a task: its blocks disappear
 - [ ] Download `.ics`: imports into Google or Apple Calendar with correct times
-- [ ] Invalid `.ics`: readable error, no crash
+- [ ] Invalid `.csv` / `.ics`: readable error, no crash
 - [ ] `DEMO_MODE=1` works with no network
 
 **Gate**

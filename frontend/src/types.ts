@@ -29,7 +29,7 @@ export type Settings = {
   free_time_min_per_day: number
 }
 
-export type TaskInput = { id: string; text: string }
+export type TaskInput = { id: string; text: string; estimated_minutes?: number }
 
 export type Block = {
   id: string

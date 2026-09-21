@@ -18,26 +18,27 @@ function toSlotTime(value: string, fallback: string): string {
 }
 
 export function CalendarView({ blocks, previewEvents, settings }: Props) {
-  const planned: EventInput[] = blocks.map((block) => ({
-    id: block.id,
-    title: block.title,
-    start: block.start,
-    end: block.end,
-    backgroundColor: BLOCK_COLORS[block.type],
-    borderColor: BLOCK_COLORS[block.type],
-    allDay: block.start.endsWith('T00:00:00+02:00') && block.end.endsWith('T00:00:00+02:00'),
-  }))
-
-  // Before the first plan there are no blocks, so show the fixed commitments
-  // the student has already given us.
-  const preview: EventInput[] = previewEvents.map((event) => ({
+  // Always keep the uploaded timetable and weekly commitments visible.
+  // Generated blocks (meals, tasks, free time) layer on top and never replace them.
+  const fromInput: EventInput[] = previewEvents.map((event) => ({
     id: event.id,
     title: event.title,
     start: event.start,
     end: event.end,
     backgroundColor: BLOCK_COLORS.event,
     borderColor: BLOCK_COLORS.event,
+    allDay: event.start.includes('T00:00:00'),
   }))
+  const generated: EventInput[] = blocks
+    .filter((block) => block.type !== 'event')
+    .map((block) => ({
+      id: block.id,
+      title: block.title,
+      start: block.start,
+      end: block.end,
+      backgroundColor: BLOCK_COLORS[block.type],
+      borderColor: BLOCK_COLORS[block.type],
+    }))
 
   return (
     <FullCalendar
@@ -57,7 +58,7 @@ export function CalendarView({ blocks, previewEvents, settings }: Props) {
         right: 'timeGridDay,timeGridWeek,dayGridMonth',
       }}
       height="100%"
-      events={planned.length > 0 ? planned : preview}
+      events={[...fromInput, ...generated]}
     />
   )
 }

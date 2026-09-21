@@ -1,10 +1,10 @@
 import { useMemo, useReducer } from 'react'
 import { schedule } from './api'
 import { CalendarView } from './components/CalendarView'
-import { CommuteForm } from './components/CommuteForm'
-import { IcsUpload } from './components/IcsUpload'
+import { DownloadIcs } from './components/DownloadIcs'
 import { Legend } from './components/Legend'
 import { RecurringForm } from './components/RecurringForm'
+import { ScheduleUpload } from './components/ScheduleUpload'
 import { SettingsForm } from './components/SettingsForm'
 import { TaskList } from './components/TaskList'
 import { expandRecurring } from './recurring'
@@ -36,7 +36,7 @@ export default function App() {
     dispatch({ type: 'set-status', status: 'loading-allocate' })
     const toPlacing = window.setTimeout(
       () => dispatch({ type: 'set-status', status: 'loading-place' }),
-      6000,
+      400,
     )
     try {
       const res = await schedule({
@@ -59,20 +59,18 @@ export default function App() {
         <h1>Gapfill</h1>
         <p className="lede">Plan a student week from a calendar and a to-do list.</p>
 
-        <IcsUpload
+        <ScheduleUpload
           events={state.events}
           onEvents={(events) => dispatch({ type: 'set-events', events })}
         />
 
-        <CommuteForm
-          commute={state.commute}
-          onPatch={(patch) => dispatch({ type: 'patch-commute', patch })}
-        />
-
         <TaskList
           tasks={state.tasks}
-          onAdd={(text) =>
-            dispatch({ type: 'add-task', task: { id: crypto.randomUUID(), text } })
+          onAdd={(text, minutes) =>
+            dispatch({
+              type: 'add-task',
+              task: { id: crypto.randomUUID(), text, estimated_minutes: minutes },
+            })
           }
           onRemove={(id) => dispatch({ type: 'remove-task', id })}
         />
@@ -92,10 +90,12 @@ export default function App() {
           type="button"
           className="primary"
           onClick={handlePlan}
-          disabled={progress !== null || state.tasks.length === 0}
+          disabled={progress !== null || (state.tasks.length === 0 && allEvents.length === 0)}
         >
           {progress ?? 'Plan my week'}
         </button>
+
+        <DownloadIcs blocks={state.blocks} />
 
         <Legend />
       </aside>

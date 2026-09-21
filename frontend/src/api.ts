@@ -2,15 +2,17 @@ import type { Event, ExportIcsRequest, ScheduleRequest, ScheduleResponse } from 
 
 const useMock = import.meta.env.VITE_USE_MOCK === '1'
 
-export async function parseIcs(file: File): Promise<Event[]> {
+/** Routes to the .csv or .ics parser based on the file extension. */
+export async function parseCalendar(file: File): Promise<Event[]> {
   if (useMock) {
     return []
   }
+  const isCsv = file.name.toLowerCase().endsWith('.csv')
   const body = new FormData()
   body.append('file', file)
-  const res = await fetch('/api/parse-ics', { method: 'POST', body })
+  const res = await fetch(isCsv ? '/api/parse-csv' : '/api/parse-ics', { method: 'POST', body })
   if (!res.ok) {
-    throw new Error(await readError(res, 'Could not parse this calendar.'))
+    throw new Error(await readError(res, 'Could not read this schedule.'))
   }
   const data: { events: Event[] } = await res.json()
   return data.events
@@ -33,9 +35,6 @@ export async function schedule(req: ScheduleRequest): Promise<ScheduleResponse> 
 }
 
 export async function exportIcs(req: ExportIcsRequest): Promise<Blob> {
-  if (useMock) {
-    throw new Error('ICS export is not available in mock mode.')
-  }
   const res = await fetch('/api/export-ics', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

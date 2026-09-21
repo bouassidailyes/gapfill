@@ -3,7 +3,7 @@
 
 ## 1. What we're building
 
-**Input:** an `.ics` calendar + a free-text to-do list + a few settings (locations, cooking frequency, lost time, free time).
+**Input:** a timetable export (`.csv` from the UM schedule, or an `.ics` calendar) + a free-text to-do list + a few settings (locations, cooking frequency, lost time, free time).
 **Output:** a planned week rendered in a calendar UI, downloadable as `.ics`, with the ability to add/remove tasks.
 
 ## 2. Principles
@@ -37,6 +37,7 @@ Env vars: `ANTHROPIC_API_KEY`, `LLM_MODEL`, `DEMO_MODE` (1 = return fixtures, no
 │  ├─ app/
 │  │  ├─ main.py          # FastAPI routes
 │  │  ├─ models.py        # pydantic schemas = source of truth (owner: A)
+│  │  ├─ csv_parse.py     # timetable .csv -> Event[]
 │  │  ├─ ics_parse.py     # .ics -> Event[]
 │  │  ├─ constraints.py   # settings -> FixedBlock[] + FreeWindow[]
 │  │  ├─ llm.py           # call_json(): call, parse, validate, retry once
@@ -56,7 +57,7 @@ Env vars: `ANTHROPIC_API_KEY`, `LLM_MODEL`, `DEMO_MODE` (1 = return fixtures, no
 ## 5. Pipeline (backend)
 
 ```
- .ics ──► [1 parse] ──► Event[] ─────────────┐
+ .csv / .ics ──► [1 parse] ──► Event[] ──────┐
  Settings ─► [2 constraints] ─► FixedBlock[] ─┼─► FreeWindow[]  (per day, minus lost-time slack)
                                               │
  Tasks (free text) ─► [3 LLM CALL 1: allocate] ─► TaskPlan[] (sessions with minutes)
@@ -66,10 +67,10 @@ Env vars: `ANTHROPIC_API_KEY`, `LLM_MODEL`, `DEMO_MODE` (1 = return fixtures, no
  Placement[] ─► [5 validate / retry / greedy fallback] ─► Block[] ─► UI + .ics
 ```
 
-### Step 1 — Parse ICS (`ics_parse.py`)
-- Read with `icalendar`; expand recurring events over the horizon with `recurring-ical-events`.
-- Handle date-only (all-day) and datetime events; normalise to the settings timezone (`Europe/Amsterdam`).
-- Output `Event {id, title, start, end, location?}`. Bad file → HTTP 422 with a readable message.
+### Step 1 — Parse the timetable (`csv_parse.py`, `ics_parse.py`)
+- **CSV (primary, UM export):** `csv_parse.py` sniffs the delimiter, matches headers case-insensitively against known aliases (`Subject`/`Course`/`Title`, `Start Date`/`Date`, `Start Time`/`From`, `End Time`/`To`, `Location`/`Room`), and accepts `YYYY-MM-DD`, `DD/MM/YYYY` and similar date formats. Missing end time → 60 min. End before start → runs past midnight. `All Day Event` true → midnight to midnight.
+- **ICS:** read with `icalendar`; expand recurring events over the horizon with `recurring-ical-events`; handle date-only (all-day) and datetime events.
+- Both normalise to the settings timezone (`Europe/Amsterdam`) and output `Event {id, title, start, end, location?}`. Bad file → HTTP 422 with a readable message.
 
 ### Step 2 — Constraints (`constraints.py`, no LLM)
 Build `FixedBlock[]` on top of the events, then compute `FreeWindow[]` = waking hours − events − fixed blocks.
@@ -113,6 +114,7 @@ All datetimes: ISO 8601 with offset, e.g. `2026-09-22T14:00:00+02:00`.
 | Method | Path | Body | Returns |
 |---|---|---|---|
 | GET | `/api/health` | — | `{ "ok": true }` |
+| POST | `/api/parse-csv` | multipart `file` | `{ events: Event[] }` |
 | POST | `/api/parse-ics` | multipart `file` | `{ events: Event[] }` |
 | POST | `/api/schedule` | `ScheduleRequest` | `ScheduleResponse` |
 | POST | `/api/export-ics` | `{ blocks: Block[], include_fixed: boolean }` | `text/calendar` attachment |
@@ -140,7 +142,7 @@ type Settings = {
   free_time_min_per_day: number         // default 60
 }
 
-type TaskInput = { id: string; text: string }   // "Finish DB assignment, due Fri, ~3h"
+type TaskInput = { id: string; text: string; estimated_minutes?: number }   // minutes the student typed; LLM may still split into sessions
 
 type Block = {
   id: string
@@ -194,7 +196,7 @@ type ScheduleResponse = {
 ## 8. Frontend
 
 Single page, no router.
-- **Sidebar:** `.ics` upload (calls `/api/parse-ics`) · settings accordion (locations/transition, meals, cooking frequency, lost time, free time) · task list (add / remove, one line each) · **Plan my week** button.
+- **Sidebar:** timetable upload, `.csv` → `/api/parse-csv` and `.ics` → `/api/parse-ics`, routed by file extension · settings accordion (locations/transition, meals, cooking frequency, lost time, free time) · task list (add / remove, one line each) · **Plan my week** button.
 - **Main:** FullCalendar `timeGridWeek`, colour by block type, legend, warnings banner, **Download .ics** button.
 - **Interactions:** click a task block → delete or lock. Drag a block → it becomes `locked` (stretch).
 - **State:** `useReducer` holding `events, tasks, settings, blocks, warnings, status`; settings and tasks mirrored to `localStorage`.
@@ -209,7 +211,8 @@ Single page, no router.
 | More work than free time | drop lowest priority sessions, surface in `warnings` |
 | Meal window fully busy | warning, no meal block |
 | API/network down | `DEMO_MODE` / cache |
-| Bad `.ics` | 422 with message, UI toast |
+| Bad `.csv` / `.ics` | 422 with message, shown under the upload field |
+| CSV headers not recognised | 422 naming the columns we expect |
 
 ## 10. Testing
 - `pytest` for the pure functions: `ics_parse`, `constraints`, `validate`, `ics_export` (run on `fixtures/sample_calendar.ics`).
