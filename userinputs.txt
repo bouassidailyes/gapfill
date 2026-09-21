@@ -1,0 +1,8 @@
+The user should input the following information (it should be passed to AI API in this order):
+1. CSV file of their university classes calendar
+2. A detailed description of event/tasks they need to do, when and where if relevant
+3. The amount of time they take to eat a meal (minutes)
+4. Their preferred amount of sleep time (hours)
+5. The amount of times they cook themselves every week on average
+6. The amount of free/rest time they would like to have daily(hours)
+7. Their average commute time home - university (minutes)
