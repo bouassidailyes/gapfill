@@ -17,7 +17,7 @@ body,
 
 .app {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 320px 1fr;
   height: 100%;
 }
 
@@ -44,19 +44,178 @@ body,
   color: #64748b;
 }
 
-.sidebar button {
+.panel {
+  border-top: 1px solid #e2e8f0;
+  padding: 0.75rem 0;
+}
+
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  display: inline;
+}
+
+.panel summary {
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.field-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+input,
+select {
   width: 100%;
-  margin: 0.5rem 0 1rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+input[type='file'] {
+  padding: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #b91c1c;
+  margin: 0.25rem 0 0;
+}
+
+.task-form {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.task-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.task-list span {
+  flex: 1;
+}
+
+button.primary {
+  width: 100%;
+  margin: 1rem 0;
   padding: 0.6rem;
   border: 0;
   border-radius: 6px;
   background: #2563eb;
   color: #fff;
   font-weight: 600;
+  cursor: pointer;
 }
 
-.sidebar button:disabled {
+button.primary:disabled {
   background: #94a3b8;
+  cursor: not-allowed;
+}
+
+button.ghost {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  background: #fff;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+label.stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin: 0.5rem 0 0.4rem;
+}
+
+.weekday-row {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0.4rem 0;
+}
+
+button.day {
+  flex: 1;
+  padding: 0.35rem 0.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.68rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+button.day.on {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+button.ghost:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.task-list small {
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+button.icon {
+  border: 0;
+  background: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+  cursor: pointer;
+}
+
+button.icon:hover {
+  color: #b91c1c;
 }
 
 .legend {
