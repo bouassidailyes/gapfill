@@ -1,32 +1,14 @@
-import { useEffect, useReducer } from 'react'
+import { useReducer } from 'react'
 import { schedule } from './api'
 import { CalendarView } from './components/CalendarView'
+import { IcsUpload } from './components/IcsUpload'
 import { Legend } from './components/Legend'
+import { SettingsForm } from './components/SettingsForm'
+import { TaskList } from './components/TaskList'
 import { initialState, reducer } from './state'
-import { DEFAULT_SETTINGS } from './types'
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  useEffect(() => {
-    let cancelled = false
-    dispatch({ type: 'set-status', status: 'loading-place' })
-    schedule({ events: [], tasks: [], settings: DEFAULT_SETTINGS })
-      .then((res) => {
-        if (!cancelled) {
-          dispatch({ type: 'set-plan', blocks: res.blocks, warnings: res.warnings })
-        }
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Could not load the mock week.'
-          dispatch({ type: 'set-status', status: 'error', error: message })
-        }
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   const progress =
     state.status === 'loading-allocate'
@@ -35,19 +17,63 @@ export default function App() {
         ? 'Placing tasks…'
         : null
 
+  async function handlePlan() {
+    dispatch({ type: 'set-status', status: 'loading-allocate' })
+    const toPlacing = window.setTimeout(
+      () => dispatch({ type: 'set-status', status: 'loading-place' }),
+      6000,
+    )
+    try {
+      const res = await schedule({
+        events: state.events,
+        tasks: state.tasks,
+        settings: state.settings,
+      })
+      dispatch({ type: 'set-plan', blocks: res.blocks, warnings: res.warnings })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Scheduling failed.'
+      dispatch({ type: 'set-status', status: 'error', error: message })
+    } finally {
+      window.clearTimeout(toPlacing)
+    }
+  }
+
   return (
     <div className="app">
       <aside className="sidebar">
         <h1>Gapfill</h1>
         <p className="lede">Plan a student week from a calendar and a to-do list.</p>
-        <p className="hint">
-          Upload, settings and tasks land in phase 2. This scaffold shows the mock week.
-        </p>
-        <button type="button" disabled>
-          Plan my week
+
+        <IcsUpload
+          events={state.events}
+          onEvents={(events) => dispatch({ type: 'set-events', events })}
+        />
+
+        <TaskList
+          tasks={state.tasks}
+          onAdd={(text) =>
+            dispatch({ type: 'add-task', task: { id: crypto.randomUUID(), text } })
+          }
+          onRemove={(id) => dispatch({ type: 'remove-task', id })}
+        />
+
+        <SettingsForm
+          settings={state.settings}
+          onPatch={(patch) => dispatch({ type: 'patch-settings', patch })}
+        />
+
+        <button
+          type="button"
+          className="primary"
+          onClick={handlePlan}
+          disabled={progress !== null || state.tasks.length === 0}
+        >
+          {progress ?? 'Plan my week'}
         </button>
+
         <Legend />
       </aside>
+
       <main className="main">
         {state.warnings.length > 0 && (
           <div className="banner warn">
@@ -58,8 +84,10 @@ export default function App() {
         )}
         {state.error && <div className="banner error">{state.error}</div>}
         {progress && <div className="banner">{progress}</div>}
-        {state.status === 'idle' && state.blocks.length === 0 && !progress && (
-          <div className="banner">No plan yet.</div>
+        {state.blocks.length === 0 && !progress && !state.error && (
+          <div className="banner">
+            No plan yet. Add your tasks, check the settings, then hit “Plan my week”.
+          </div>
         )}
         <div className="calendar-wrap">
           <CalendarView blocks={state.blocks} />
