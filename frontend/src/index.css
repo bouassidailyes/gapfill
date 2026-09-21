@@ -155,6 +155,21 @@ button.ghost {
   cursor: pointer;
 }
 
+label.stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin: 0.5rem 0 0.4rem;
+}
+
 .weekday-row {
   display: flex;
   gap: 0.2rem;
@@ -163,7 +178,7 @@ button.ghost {
 
 button.day {
   flex: 1;
-  padding: 0.3rem 0;
+  padding: 0.35rem 0.2rem;
   border: 1px solid #cbd5e1;
   border-radius: 4px;
   background: #fff;

@@ -1,6 +1,7 @@
 import { useMemo, useReducer } from 'react'
 import { schedule } from './api'
 import { CalendarView } from './components/CalendarView'
+import { CommuteForm } from './components/CommuteForm'
 import { IcsUpload } from './components/IcsUpload'
 import { Legend } from './components/Legend'
 import { RecurringForm } from './components/RecurringForm'
@@ -61,6 +62,11 @@ export default function App() {
         <IcsUpload
           events={state.events}
           onEvents={(events) => dispatch({ type: 'set-events', events })}
+        />
+
+        <CommuteForm
+          commute={state.commute}
+          onPatch={(patch) => dispatch({ type: 'patch-commute', patch })}
         />
 
         <TaskList
