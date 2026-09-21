@@ -57,6 +57,7 @@ class Settings(BaseModel):
 class TaskInput(BaseModel):
     id: str
     text: str
+    estimated_minutes: Optional[int] = None
 
 
 BlockType = Literal["event", "task", "meal", "cook", "travel", "free", "slack"]

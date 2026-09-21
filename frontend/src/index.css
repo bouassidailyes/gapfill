@@ -100,9 +100,20 @@ input[type='file'] {
   margin: 0.25rem 0 0;
 }
 
+.task-form .minutes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.68rem;
+  color: #64748b;
+  width: 4.4rem;
+  flex: none;
+}
+
 .task-form {
   display: flex;
   gap: 0.4rem;
+  align-items: flex-end;
 }
 
 .task-list {
@@ -142,6 +153,22 @@ button.primary {
 
 button.primary:disabled {
   background: #94a3b8;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.55rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary:disabled {
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
